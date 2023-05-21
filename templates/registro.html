@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: rgba(0, 0, 0, 0.8);
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .instructions {
+            color: #ffffff;
+            text-align: left;
+            max-width: 600px;
+            padding: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .instructions:hover {
+            color: #0cb967;
+        }
+
+        .instructions h1 {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+        .instructions h2{
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .instructions h3{
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .instructions ul{
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .register-box {
+            background-color: rgba(0, 0, 0, 0.4);
+            color: #ffffff;
+            padding: 40px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .register-box img {
+            width: 200px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group:hover {
+            transform: translateY(-5px);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            border-radius: 0;
+            height: 40px;
+            color: rgba(0, 0, 0, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        button[type="submit"] {
+            border-radius: 0;
+            height: 40px;
+            font-size: 16px;
+            background-color: #0cb967;
+            border: none;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #ffffff;
+            color: #0cb967;
+        }
+        .back-button {
+        margin-top: 10px;
+        margin-left: 10px;
+        background-color: #C5D86D;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: rgba(0, 0, 0, 0.8);
+        font-size: 20px;
+        border-radius: 5px;
+        }
+        .logout-button{
+        margin-top: 10px;
+        margin-right: 10px;
+        background-color: #C5D86D;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: rgba(0, 0, 0, 0.8);
+        font-size: 20px;
+        border-radius: 5px;
+        }
+
+        .back-button:hover {
+          background-color: #AFE0CE;
+        }
+        .logout-button:hover{
+          background-color: #AFE0CE;
+        }
+
+        .button-container {
+        display: flex;
+        justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <button class="back-button" onclick="goBack()">Atrás</button>
+    </div>
+    <div class="container">
+        <div class="register-box">
+            <img src="/static/img/ucsm_banner.png" alt="Logo de la Farmacia" class="img-fluid">
+            <form method="POST" action="">
+                <div class="form-group">
+                    <input type="text" id="nombre" name="nombres" placeholder="Nombres" required
+                           class="form-control rounded" maxlength="50" oninput="validar(this)">
+                </div>
+                <div class="form-group">
+                    <input type="text" name="dni" placeholder="DNI"  class="form-control rounded" required
+                           maxlength="8" oninput="validarNumeros(this)">
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="correo" placeholder="Correo Electrónico" required
+                           class="form-control rounded" maxlength="50" oninput="validar(this)">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña" required
+                           class="form-control rounded " maxlength="25" oninput="validar(this)">
+                </div>
+                <!-- Mensajes flash -->
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for message in messages %}
+                                <div class="alert alert-success" role="alert">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success btn-block rounded">Registrar</button>
+                </div>
+            </form>
+        </div>
+        <div class="instructions">
+            <h1>Registro de Usuario</h1>
+            <h2>Completa el siguiente formulario para crear una cuenta.</h2>
+            <h3>Requisitos para el registro:</h3>
+            <ul>
+                <li>Nombre: Mínimo 2 y máximo 50 caracteres</li>
+                <li>DNI: EL DNI consta de 8 dígitos.</li>
+                <li>Email: Debe ser una dirección de correo válida</li>
+                <li>Contraseña:
+                    <ul>
+                        <li>Mínimo 8 y máximo 25 caracteres</li>
+                        <li>Debe contener al menos un carácter especial excepto "<" y ">"</li>
+                        <li>Debe contener al menos un número</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
+<script>
+    function validarNumeros(input) {
+    input.value = input.value.replace(/\D/g, '');
+    }
+    function validar(input) {
+        var nombre = input.value;
+        var caracteresProhibidos = ["<", ">", "[", "]", "{", "}", "(", ")"];
+
+        for (var i = 0; i < caracteresProhibidos.length; i++) {
+            if (nombre.includes(caracteresProhibidos[i])) {
+                input.value = nombre.replace(caracteresProhibidos[i], "");
+            }
+        }
+    }
+    function goBack() {
+        window.history.back();
+    }
+</script>
+</html>

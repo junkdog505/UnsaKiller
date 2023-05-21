@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de Sesión</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: rgba(0, 0, 0, 0.8);
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .instructions {
+            color: #ffffff;
+            text-align: left;
+            max-width: 600px;
+            padding: 80px;
+            transition: all 0.3s ease;
+
+        }
+
+        .instructions:hover {
+            color: #0cb967;
+        }
+
+        .instructions h1 {
+            font-size: 35px;
+            margin-bottom: 10px;
+        }
+        .instructions h2{
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .instructions h3{
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .instructions ul{
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .login-box {
+            background-color: rgba(0, 0, 0, 0.4);
+            color: #ffffff;
+            padding: 40px;
+            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .login-box img {
+            width: 200px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group:hover {
+            transform: translateY(-5px);
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            border-radius: 0;
+            height: 40px;
+            color: rgba(0, 0, 0, 0.8);
+            transition: all 0.3s ease;
+        }
+        /*
+        input[type="email"]:hover,
+        input[type="password"]:hover {
+            background-color: #0cb967;
+        }*/
+
+        button[type="submit"] {
+            border-radius: 0;
+            height: 40px;
+            font-size: 16px;
+            background-color: #0cb967;
+            border: none;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #ffffff;
+            color: #0cb967;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="instructions">
+            <h1>Bienvenido a UCSM Farma</h1>
+            <h2>Ingresa tus credenciales para iniciar sesión.</h2>
+            <h3>Como ejemplo:</h3>
+            <ul>
+                <li>ejemplo@gmail.com</li>
+                <li>ejemplo@outlook.com</li>
+                <li>ejemplo@ucsm.com</li>
+            </ul>
+            <h2>Ingrese su contraseña para iniciar sesión.</h2>
+            <h3>Tiene que cumplir:</h3>
+            <ul>
+                <li>Mínimo 8 y máximo 25 caracteres</li>
+                <li>Ingrese un caracter especial excepto "<" y ">", no son válidos. </li>
+                <li>Debe contener un número al menos</li>
+            </ul>
+
+        </div>
+        <div class="login-box">
+            <img src="/static/img/ucsm_banner.png" alt="Logo de la Farmacia" class="img-fluid">
+            <form method="POST" action="">
+                <div class="form-group">
+                    <input type="email" id="entrada_email" name="correo" name="correo" placeholder="Correo Electrónico"
+                           required
+                           class="form-control rounded" oninput="validar(this)">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="entrada_contra" name="contrasena"placeholder="Contraseña" required
+                           class="form-control rounded" oninput="validar(this)">
+                </div>
+                <div class="form-group">
+                    <p>¿No tienes una cuenta? <a href="{{ url_for('registro') }}">Regístrate</a></p>
+                </div>
+                <div class="form-group ">
+                    <button type="submit" class="btn btn-success btn-block rounded">Iniciar Sesión</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        function validar(input) {
+        var nombre = input.value;
+        var caracteresProhibidos = ["<", ">", "[", "]", "{", "}", "(", ")"];
+
+        for (var i = 0; i < caracteresProhibidos.length; i++) {
+            if (nombre.includes(caracteresProhibidos[i])) {
+                input.value = nombre.replace(caracteresProhibidos[i], "");
+            }
+        }
+        }
+        function goBack() {
+          window.history.back();
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sucursales</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: rgba(0, 0, 0, 0.8);
+            font-family: Arial, sans-serif;
+        }
+        .container h1{
+            margin-top: 80px;
+            color: #ffff;
+            transition: all 0.3s ease;
+        }
+        .container h1:hover{
+            color: #0cb967;
+        }
+        .sucursal-card {
+            margin-bottom: 20px;
+            margin-top: 40px;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .sucursal-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .sucursal-card .card-body {
+            padding: 10px;
+            color: #fff;
+        }
+
+        .sucursal-card .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .sucursal-card .card-text {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .sucursal-card .btn {
+            border-radius: 0;
+            height: 40px;
+            font-size: 16px;
+            background-color: #0cb967;
+            border: none;
+            color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .sucursal-card .btn:hover {
+            background-color: #ffffff;
+            color: #0cb967;
+        }
+    .back-button {
+    margin-top: 10px;
+    margin-left: 10px;
+    background-color: #C5D86D;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 20px;
+    border-radius: 5px;
+    }
+    .logout-button{
+    margin-top: 10px;
+    margin-left: 10px;
+    background-color: #C5D86D;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 20px;
+    border-radius: 5px;
+    }
+
+    .back-button:hover {
+      background-color: #AFE0CE;
+    }
+    .logout-button:hover{
+      background-color: #AFE0CE;
+    }
+
+    .button-container {
+    display: flex;
+    justify-content: space-between;
+    }
+
+    </style>
+     <script>
+        function obtenerHoraActual() {
+          return new Date();
+        }
+
+        function mostrarAlertaBootstrap(mensaje, tipo) {
+            var horaActual = obtenerHoraActual();
+            var horaInicio = new Date();
+            horaInicio.setHours(7, 0, 0); // 7 am
+            var horaFin = new Date();
+            horaFin.setHours(21, 0, 0); // 9 pm
+            var mensaje;
+
+            if (horaActual >= horaInicio && horaActual <= horaFin) {
+                mensaje = "Farmacias en horario de atención. ;)";
+                tipoAlerta = "success"; // Color verde
+            } else {
+                mensaje = "Farmacias fuera de servicio. :(";
+                tipoAlerta = "danger"; // Color rojo
+            }
+
+            var alerta = document.createElement("div");
+            alerta.className = "alert alert-" + tipoAlerta + " text-center";
+            alerta.innerText = mensaje;
+
+            alerta.style.position = "absolute";
+            alerta.style.top = "10%";
+            alerta.style.left = "42.5%";
+
+            document.body.insertBefore(alerta, document.body.firstChild);
+            setTimeout(function() {
+                alerta.remove();
+            }, 3000); // La alerta se eliminará después de 3 segundos (3000 milisegundos)
+           }
+
+        function goBack() {
+          window.history.back();
+        }
+    </script>
+</head>
+<body onload="mostrarAlertaBootstrap()">
+    <div class="button-container">
+    <form action="{{ url_for('logout') }}" method="post">
+        <button class="logout-button" type="submit">Cerrar sesión</button>
+    </form>
+    </div>
+    <div class="container">
+        <h1>Sucursales</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card sucursal-card">
+                    <img src="/static/img/arequipa_sucursal.png" alt="Sucursal 1" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Sucursal en Arequipa</h5>
+                        <p class="card-text text-justify">Arequipa, conocida como "La Ciudad Blanca", es una joya arquitectónica ubicada en Perú. Con su impresionante centro histórico, resalta por sus imponentes construcciones de sillar volcánico. Además, Arequipa alberga paisajes naturales sorprendentes como el majestuoso cañón del Colca y el imponente volcán Misti.</p>
+                        <p class="card-text">Av. Ejercito 123</p>
+                        <p class="card-text">Horario: 7 AM - 9 PM</p>
+                        <a href="{{ url_for('categorias', sucursal_id=1) }}" class="btn btn-primary rounded">Acceder a Categorías</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card sucursal-card">
+                    <img src="/static/img/pucallpa_sucursal.jpg" alt="Sucursal 2" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Sucursal en Pucallpa</h5>
+                        <p class="card-text text-justify">Pucallpa, la "Puerta de la Amazonía", es una ciudad vibrante ubicada en Perú. Rodeada de exuberante vegetación amazónica, ofrece una experiencia única en contacto con la naturaleza. Con su cultura indígena y variada gastronomía, Pucallpa cautiva a los visitantes con su encanto selvático y su hospitalidad.</p>
+                        <p class="card-text">Jr. Tarapacá 404</p>
+                        <p class="card-text">Horario: 7 AM - 9 PM</p>
+                        <a href="{{ url_for('categorias', sucursal_id=2) }}" class="btn btn-primary rounded">Acceder a Categorías</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card sucursal-card">
+                    <img src="/static/img/lima_sucursal.png" alt="Sucursal 3" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title">Sucursal en Lima</h5>
+                        <p class="card-text text-justify">Lima es la capital de Perú, una ciudad vibrante y llena de contrastes. Sus calles están impregnadas de historia colonial y su moderna costa ofrece hermosas vistas al Océano Pacífico. Además, su rica gastronomía la convierte en un destino culinario de renombre internacional.</p>
+                        <br>
+                        <p class="card-text">Av. Imperial 505</p>
+                        <p class="card-text">Horario: 7 AM - 9 PM</p>
+                        <a href="{{ url_for('categorias', sucursal_id=3) }}" class="btn btn-primary">Acceder a Categorías</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

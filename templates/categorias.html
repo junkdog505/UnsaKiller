@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categorías de Productos</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<style>
+    body {
+      background-color: rgba(0, 0, 0, 0.8);
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.4);
+      box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.4);
+      border-radius: 5px;
+    }
+
+    h1 {
+      color: #fff;
+      font-size: 55px;
+      text-align: center;
+      margin-bottom: 30px;
+      transition: all 0.3s ease;
+    }
+
+    h1:hover {
+      color: #0cb967;
+    }
+
+    .row {
+      margin-bottom: 20px;
+    }
+
+    .category {
+      background-color: rgba(0, 0, 0, 0.4);
+      border-radius: 5px;
+      padding: 20px;
+      box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      margin-top: 15px;
+      height: 250px;
+    }
+
+    .category:hover {
+      transform: translateY(-5px);
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .category-title {
+      font-size: 24px;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .category-description {
+      font-size: 16px;
+      color: #fff;
+      margin-bottom: 50px;
+    }
+
+
+    .category-button {
+    border-radius: 0;
+    height: 40px;
+    font-size: 16px;
+    background-color: #0cb967;
+    border: none;
+    color: #ffffff;
+    transition: all 0.3s ease;
+    }
+
+    .category-button:hover {
+      background-color: #0cb967b3;
+    }
+    .back-button {
+    margin-top: 10px;
+    margin-left: 10px;
+    background-color: #C5D86D;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 20px;
+    border-radius: 5px;
+    }
+    .logout-button{
+    margin-top: 10px;
+    margin-right: 10px;
+    background-color: #C5D86D;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 20px;
+    border-radius: 5px;
+    }
+
+    .back-button:hover {
+      background-color: #AFE0CE;
+    }
+    .logout-button:hover{
+      background-color: #AFE0CE;
+    }
+
+    .button-container {
+    display: flex;
+    justify-content: space-between;
+    }
+  </style>
+<body>
+<div class="button-container">
+    <button class="back-button" onclick="redirectTo('{{ url_for('sucursal') }}')">Atrás</button>
+    <form action="{{ url_for('logout') }}" method="post">
+        <button class="logout-button" type="submit">Cerrar sesión</button>
+    </form>
+</div>
+  <div class="container">
+    <h1>Categorías de Productos</h1>
+    <form action="{{ url_for('categorias') }}" method="POST" autocomplete="off">
+      <div class="row">
+        <div class="col-md-6 col-lg-4">
+          <div class="category">
+            <h2 class="category-title">Todos los Productos</h2>
+            <p class="category-description">Se muestran todos los productos de la sucursal.</p>
+            <a href="/productos?sucursal_id={{ request.args.get('sucursal_id') }}"  class="btn btn-success btn-block rounded">Ver
+              Productos</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category">
+            <h2 class="category-title">Venta Libre</h2>
+            <p class="category-description">Productos sin necesidad de receta médica.</p>
+            <a href="/productos?sucursal_id={{ request.args.get('sucursal_id') }}&categoria=Venta Libre"
+               class="btn btn-success btn-block rounded">Ver Productos</a>
+
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category">
+            <h2 class="category-title">Venta con Receta</h2>
+            <p class="category-description">Productos que requieren receta médica para su compra.</p>
+            <a href="/productos?sucursal_id={{ request.args.get('sucursal_id') }}&categoria=Receta"
+               class="btn btn-success btn-block rounded">Ver Productos</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category">
+            <h2 class="category-title">Cuidado Personal</h2>
+            <p class="category-description">Productos para el cuidado personal y belleza.</p>
+            <a href="/productos?sucursal_id={{ request.args.get('sucursal_id') }}&categoria=Cuidado Personal"
+               class="btn btn-success btn-block rounded">Ver Productos</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category">
+            <h2 class="category-title">Bebés y Niños</h2>
+            <p class="category-description">Productos para el cuidado y bienestar de bebés y niños.</p>
+            <a href="/productos?sucursal_id={{ request.args.get('sucursal_id') }}&categoria=Bebés y Niños"
+               class="btn btn-success btn-block rounded">Ver Productos</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category">
+            <h2 class="category-title">Higiene Bucal</h2>
+            <p class="category-description">Productos para el cuidado y limpieza bucal.</p>
+            <a href="/productos?sucursal_id={{ request.args.get('sucursal_id') }}&categoria=Higiene Bucal"
+               class="btn btn-success btn-block rounded">Ver Productos</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category">
+            <h2 class="category-title">Nutrición y Suplementos</h2>
+            <p class="category-description">Productos para la nutrición y suplementos alimenticios.</p>
+            <a href="/productos?sucursal_id={{ request.args.get('sucursal_id') }}&categoria=Suplementos"
+               class="btn btn-success btn-block rounded">Ver Productos</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category">
+            <h2 class="category-title">Cuidado de Piel</h2>
+            <p class="category-description">Productos para el cuidado y salud de la piel.</p>
+            <a href="/productos?sucursal_id={{ request.args.get('sucursal_id') }}&categoria=Cuidado de Piel"
+               class="btn btn-success btn-block rounded" id="btnCare">Ver Productos</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="category">
+            <h2 class="category-title">Salud Sexual</h2>
+            <p class="category-description">Productos para la salud y bienestar sexual.</p>
+            <a href="/productos?sucursal_id={{ request.args.get('sucursal_id') }}&categoria=Salud Sexual"
+               class="btn btn-success btn-block rounded" id="btnSex">Ver Productos</a>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" name="id_sucursal" id="id_sucursal" value="{{ request.args.get('id_sucursal', '') }}">
+    </form>
+  </div>
+</body>
+
+<script>
+  function setSucursalId(sucursalId) {
+    document.getElementById('id_sucursal').value = sucursalId;
+  }
+  function redirectTo(url) {
+    window.location.href = url;
+  }
+</script>
+
+</html>
