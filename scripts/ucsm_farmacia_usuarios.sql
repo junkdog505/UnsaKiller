@@ -32,7 +32,7 @@ CREATE TABLE `usuarios` (
   UNIQUE KEY `dni` (`dni`),
   UNIQUE KEY `correo` (`correo`),
   CONSTRAINT `chk_dni` CHECK (regexp_like(`dni`,_utf8mb4'^[0-9]{8}$'))
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +41,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Carlos Elisban Huaman','45678932','Carlos@ucsm.com','Carlos123*'),(2,'Cristian Amézquita Soto','76060985','nomad@gmail.com','Nomad18*'),(3,'Joseph Zorra','12345698','josephlolero@gmail.com','Lolero123*');
+INSERT INTO `usuarios` VALUES (1,'Carlos Elisban Huaman','45678932','Carlos@ucsm.com','Carlos123*'),(2,'Cristian Amézquita Soto','76060985','nomad@gmail.com','Nomad18*'),(3,'Joseph Zorra','12345698','josephlolero@gmail.com','Lolero123*'),(4,'Edison Soto','45685295','akira@gmail.com','Nowhere123*');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +54,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-20 20:20:40
+-- Dump completed on 2023-05-22  3:14:24

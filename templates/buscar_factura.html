@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Facturas</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <style>
+    .fadeIn {
+      animation: fadeIn 1s;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Facturas</h1>
+    <input type="date" id="datePicker" class="form-control">
+    <br>
+    <button class="btn btn-primary" onclick="searchByDate()">Buscar</button>
+    <br><br>
+    <table class="table">
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Sucursal</th>
+      <th>Costo Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for factura in facturas %}
+      <tr>
+        <td>{{ factura.fecha }}</td>
+        <td>{{ factura.sucursal }}</td>
+        <td>{{ factura.total }}</td>
+        <td>
+          <a href="/factura/{{ factura.id_factura }}" class="btn btn-primary">Ver Factura</a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  <script>
+    function searchByDate() {
+      var selectedDate = document.getElementById("datePicker").value;
+      // Aquí puedes realizar la lógica de búsqueda y obtención de las facturas en base a la fecha seleccionada
+
+      // Ejemplo de inserción de filas de factura de manera dinámica
+      var invoiceList = document.getElementById("invoiceList");
+      invoiceList.innerHTML = "";
+      var invoices = [
+        { fecha: "2023-05-20", sucursal: "Sucursal A", total: 100 },
+        { fecha: "2023-05-21", sucursal: "Sucursal B", total: 200 },
+        { fecha: "2023-05-22", sucursal: "Sucursal C", total: 300 }
+      ];
+
+      invoices.forEach(function(invoice) {
+        var row = document.createElement("tr");
+        row.innerHTML = "<td>" + invoice.fecha + "</td><td>" + invoice.sucursal + "</td><td>" + invoice.total + "</td>";
+        row.classList.add("fadeIn");
+        invoiceList.appendChild(row);
+      });
+    }
+  </script>
+</body>
+</html>

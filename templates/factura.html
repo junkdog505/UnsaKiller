@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Factura</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #F0EBD8;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            grid-gap: 20px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            width: 400px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #E6E6E6;
+            border: none;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            border: 1.5px solid #ccc;
+            text-align: center;
+            vertical-align: middle; /
+
+        }
+
+        .table th {
+            background-color: #E6E6E6;
+            font-weight: bold;
+        }
+
+        .table .total-row {
+            font-weight: bold;
+        }
+
+        .fade-in-table {
+            animation: fadeInTable 1s ease;
+        }
+
+        @keyframes fadeInTable {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .titulo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .titulo h1 {
+            text-align: left;
+        }
+
+        #fecha {
+            text-align: center;
+            width: 180px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container fade-in">
+        <div>
+            <div class="titulo">
+                <h1>Factura</h1>
+                <input type="text" id="fecha" name="fecha" class="form-input" value="{{ fecha_actual }}   {{ hora_actual }}" readonly>
+            </div>
+            <h2>{{ productos_seleccionados[0]['nombre_sucursal'] }}: {{ productos_seleccionados[0]['pais'] }}, {{
+                productos_seleccionados[0]['ciudad'] }} <br> {{ productos_seleccionados[0]['direccion'] }}. </h2>
+            <div class="form-group">
+                <label for="nombre" class="form-label">Nombres del Cliente:</label>
+                <input type="text" id="nombre" name="nombre" class="form-input" value="{{ productos_seleccionados[0]['nombres'] }}" placeholder="Ingrese el nombre del cliente" readonly>
+            </div>
+            <div class="form-group">
+                <label for="dni" class="form-label">DNI del Cliente:</label>
+                <input type="text" id="dni" name="dni" class="form-input" value="{{ productos_seleccionados[0]['dni'] }}" placeholder="Ingrese el DNI del cliente" readonly>
+            </div>
+            <div class="form-group">
+                <label for="correo" class="form-label">E-mail del Cliente:</label>
+                <input type="text" id="correo" name="correo" class="form-input" value="{{ productos_seleccionados[0]['correo'] }}" placeholder="Ingrese el DNI del cliente" readonly>
+            </div>
+            <form action="/guardar_factura" method="POST">
+                <button class="btn btn-warning" type="submit" id="save-fac">Confirmar Factura</button>
+            </form>
+        </div>
+        <div>
+            <h2>Detalle de Productos</h2>
+            <table class="table fade-in-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Importe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos_seleccionados %}
+                        <tr>
+                            <td>{{ producto.nombre_producto }}</td>
+                            <td class="text-center">{{ producto.cantidad }}</td>
+                            <td class="text-center">{{ producto.precio }}</td>
+                            <td class="text-center">{{ producto.total }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="total-row">
+                        <td colspan="3" class="text-left">Subtotal:</td>
+                        <td class="text-center">{{ subtotal|float|round(2) }}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="3" class="text-left">IGV (18%):</td>
+                        <td class="text-center">{{ impuesto|float|round(2) }}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="3" class="text-left">Total:</td>
+                        <td class="text-center">{{ total|float|round(2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        // Fade in animation for the container
+        const container = document.querySelector('.container');
+        container.classList.add('fade-in');
+
+        // Fade in animation for the table
+        const table = document.querySelector('.fade-in-table');
+        table.classList.add('fade-in-table');
+
+    </script>
+</body>
+</html>

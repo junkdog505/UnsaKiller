@@ -1,7 +1,15 @@
+from _decimal import Decimal
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import pymysql
 import re
-from datetime import date
+from datetime import datetime
+from decimal import Decimal
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+
+
+from flask_login import current_user, LoginManager, UserMixin
 
 app = Flask(__name__)
 app.secret_key = 'testing_grupo01'
@@ -16,9 +24,22 @@ def connect():
         port=3306
     )
 
-
 # Configuración de la ruta de imágenes de productos
 app.config['PRODUCT_IMAGE_PATH'] = 'static/images/products/'
+
+# Configuración de Flask-Login
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+
+# Clase de usuario para Flask-Login
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
+
 
 # Funciones de validación de campos
 def validar_nombre(nombre):
@@ -52,7 +73,6 @@ def validar_contrasena(contrasena):
             return True
     return False
 
-
 # Ruta de inicio de sesión
 @app.route('/', methods=['GET', 'POST'])
 def login():
@@ -82,7 +102,6 @@ def login():
             return redirect(url_for('login'))
 
     return render_template('login.html')
-
 
 # Ruta de registro de usuario
 @app.route('/registro', methods=['GET', 'POST'])
@@ -133,9 +152,6 @@ def registro():
             return redirect(url_for('registro'))
 
     return render_template('registro.html')
-
-
-
 # Ruta de selección de sucursal
 @app.route('/sucursal')
 def sucursal():
@@ -148,7 +164,6 @@ def sucursal():
     cursor.close()
 
     return render_template('sucursales.html', sucursales=sucursales)
-
 
 # Ruta de selección de categoría de productos
 @app.route('/categorias', methods=['GET', 'POST'])
@@ -165,8 +180,6 @@ def categorias():
 
     return render_template('categorias.html')
 
-
-
 # Ruta de selección de productos
 @app.route('/productos')
 def productos():
@@ -174,6 +187,9 @@ def productos():
         return redirect(url_for('login'))
 
     sucursal_id = request.args.get('sucursal_id')
+
+    # Almacena el ID de la sucursal en la sesión
+    session['id_sucursal'] = sucursal_id
     categoria = request.args.get('categoria')
 
     # Realizar la consulta SQL utilizando los valores de sucursal_id y categoria
@@ -193,31 +209,117 @@ def productos():
 
     return render_template('productos.html', productos=productos)
 
-
-# Ruta de generación de factura
-@app.route('/factura')
+# Ruta de facturación
+@app.route('/factura', methods=['GET', 'POST'])
 def factura():
+    usuario_id = session.get('usuario_id')  # Obtener el ID del usuario almacenado en la sesión
     if 'usuario_id' not in session:
         return redirect(url_for('login'))
 
-    # Obtener los productos seleccionados por el usuario
-    cursor = connect().cursor()
-    cursor.execute(
-        "SELECT productos.nombre, productos_factura.cantidad, productos.precio_unitario FROM productos_factura JOIN productos ON productos_factura.producto_id = productos.id")
-    productos_factura = cursor.fetchall()
-    cursor.close()
+    if request.method == 'POST':
+        fecha_actual = datetime.now().strftime('%d/%m/%Y')
+        hora_actual = datetime.now().strftime('%H:%M')
+        conn = connect()
+        cursor = conn.cursor()
 
-    subtotal = 0.0
-    for producto in productos_factura:
-        subtotal += producto['cantidad'] * producto['precio_unitario']
+        productos_seleccionados = []
+        subtotal = 0  # Variable para almacenar el subtotal
 
-    igv = subtotal * 0.18
-    total = subtotal + igv
+        for key, value in request.form.items():
+            if key.startswith('cantidad_'):
+                producto_id = key.split('_')[1]
+                cantidad = int(value)
 
-    fecha_actual = date.today().strftime("%d-%m-%Y")
+                if cantidad > 0:
+                    # Obtener los datos del producto desde la base de datos
+                    query = "SELECT u.nombres, u.dni, u.correo, p.nombre AS nombre_producto, p.precio, s.nombre AS " \
+                            "nombre_sucursal, s.direccion, s.ciudad, s.pais FROM usuarios u, productos p, sucursales " \
+                            "s WHERE p.id_producto = %s AND u.id_usuario = %s;"
+                    cursor.execute(query, (producto_id, usuario_id))
+                    producto = cursor.fetchone()
 
-    return render_template('factura.html', productos_factura=productos_factura, subtotal=subtotal, igv=igv, total=total,
-                           fecha_actual=fecha_actual)
+                    # Calcular el importe del producto y agregarlo al subtotal
+                    importe = Decimal(cantidad) * producto[4]
+                    subtotal += importe
+
+                    # Agregar el producto y la cantidad a la lista de productos seleccionados
+                    productos_seleccionados.append({
+                        'nombres': producto[0],
+                        'dni': producto[1],
+                        'correo': producto[2],
+                        'nombre_producto': producto[3],
+                        'cantidad': cantidad,
+                        'precio': producto[4],
+                        'total': float(importe),
+                        'nombre_sucursal': producto[5],
+                        'direccion': producto[6],
+                        'ciudad': producto[7],
+                        'pais':producto[8],
+                        'producto_id': producto_id
+                    })
+
+        cursor.close()
+        conn.close()
+
+        # Calcular impuesto y total
+        impuesto = subtotal * Decimal('0.18')
+        total = subtotal + impuesto
+        # Antes de redirigir a la ruta '/guardar_factura', guarda los productos seleccionados en la sesión
+        session['productos_seleccionados'] = productos_seleccionados
+
+        # Renderizar la plantilla factura.html y pasar los datos seleccionados
+        return render_template('factura.html', productos_seleccionados=productos_seleccionados,
+                               fecha_actual=fecha_actual, hora_actual=hora_actual,
+                               subtotal=subtotal, impuesto=impuesto, total=total)
+
+    else:
+        # Renderizar la plantilla factura.html para mostrar el formulario inicial
+        return render_template('factura.html')
+
+
+# Ruta para guardar la factura en la base de datos
+@app.route('/guardar_factura', methods=['POST'])
+def guardar_factura():
+    usuario_id = session.get('usuario_id')  # Obtener el ID del usuario almacenado en la sesión
+    if 'usuario_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        # Obtener los datos de la factura del formulario
+        fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        nombre_cliente = request.form.get('nombre')
+        dni_cliente = request.form.get('dni')
+        correo_cliente = request.form.get('correo')
+        productos_seleccionados = session.get('productos_seleccionados')
+
+        # Calcular el subtotal, impuesto y total
+        subtotal = sum(float(producto['total']) for producto in productos_seleccionados)
+        impuesto = subtotal * 0.18
+        total = subtotal + impuesto
+
+        conn = connect()
+        cursor = conn.cursor()
+
+        # Insertar los datos de la factura en la tabla de facturas
+        query = "SELECT id_producto FROM productos WHERE nombre = %s"
+        cursor.execute(query, (productos_seleccionados[0]['nombre_producto']))
+        id_producto = cursor.fetchone()[0]
+
+        cursor.execute(
+            'INSERT INTO factura (id_usuario, id_producto, fecha, subtotal, igv, total) '
+            'VALUES (%s, %s, %s, %s, %s, %s)',
+            (usuario_id, id_producto,fecha_actual, subtotal, impuesto, total)
+        )
+
+        # Guardar los cambios y cerrar la conexión a la base de datos
+        conn.commit()
+        conn.close()
+
+        return render_template('confirmar_factura.html')
+
+    return render_template('confirmar_factura.html')
+
+
 
 
 # Ruta de búsqueda de facturas por DNI
@@ -246,4 +348,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(port=3000,debug=True)
+    app.run(port=3000, debug=True)
