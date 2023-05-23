@@ -4,6 +4,11 @@
   <title>Mi página web</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #fff;
+    }
     .container {
       display: flex;
       align-items: center;
@@ -17,12 +22,19 @@
       justify-content: space-between;
       width: 80%;
       max-width: 800px;
+      font-size: 24px;
     }
 
     .text {
       flex-grow: 1;
       font-size: 24px;
     }
+    .text h1 {
+      font-size: 84px;
+      }
+    .text h2 {
+      font-size: 54px;
+      }
 
     .buttons {
       display: flex;
@@ -32,23 +44,118 @@
     .buttons button {
       margin-left: 10px;
     }
+
+    .floating-buttons {
+      position: fixed;
+      border : none;
+      right: 20px;
+      bottom: 200px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      animation: floatIn 1s ease-in-out forwards; /* Agregar animación de entrada */
+      transition: all 0.3s ease;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Agregar sombreado */
+    }
+    .floating-buttons .btn:hover {
+       background-color: #AFE0CE;
+    }
+
+    .floating-buttons .btn {
+      background-color: #C5D86D;
+      border : none;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      height: 150px;
+      width: 350px;
+
+    }
+
+    .floating-buttons .btn img {
+      border : none;
+      margin-right: 5px;
+      width: 130px;
+      height: 130px;
+    }
+    .floating-buttons span{
+      margin-left: 30px;
+      color: black;
+      font-size: 15px;
+    }
+
+    @keyframes floatIn {
+        0% {
+            transform: translateY(200px); /* Iniciar desde arriba de la pantalla */
+            opacity: 0;
+            }
+            100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+        .logout-button{
+        margin-top: 10px;
+        margin-left: 10px;
+        background-color: #C5D86D;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: rgba(0, 0, 0, 0.8);
+        font-size: 20px;
+        border-radius: 5px;
+        }
+
+        .logout-button:hover{
+          background-color: #AFE0CE;
+        }
   </style>
 </head>
 <body>
+    <form action="{{ url_for('logout') }}" method="post">
+          <button class="logout-button" type="submit">Cerrar sesión</button>
+    </form>
   <div class="container">
     <div class="content">
       <div class="text">
         <h1>Compra realizada con éxito</h1>
-        <h1>;)</h1>
-      </div>
-      <div class="buttons">
-        <button class="btn btn-primary">Cerrar sesión</button>
-        <button class="btn btn-success">Seguir comprando</button>
+        <h2>;)</h2>
       </div>
     </div>
   </div>
 
+  <div class="floating-buttons">
+    <button type="button" class="btn btn-primary" onclick="goBackTwice()">
+      <img src="/static/img/seguir-comprando.png" alt="Botón 1">
+      <span>Seguir Comprando</span>
+    </button>
+    <button type="button" class="btn btn-primary" onclick="redirectTo('{{ url_for('sucursal') }}')">
+      <img src="/static/img/sucursales.png" alt="Botón 2">
+      <span>Escoger sucursal</span>
+    </button>
+    <button type="button" class="btn btn-primary" onclick="redirectTo('{{ url_for('buscar_factura') }}')">
+      <img src="/static/img/historial.png" alt="Botón 3">
+      <span>Historial de Compras</span>
+    </button>
+  </div>
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script>
+  function goBackProduct() {
+    window.history.back();
+    window.history.back();
+  }
+
+  function redirectTo(url) {
+    window.location.href = url;
+  }
+  function goBackTwice() {
+    window.history.go(-1);
+    window.history.go(-1);
+  }
+</script>
 </body>
 </html>

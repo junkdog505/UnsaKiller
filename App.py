@@ -196,7 +196,7 @@ def factura():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        fecha_actual = datetime.now().strftime('%d/%m/%Y')
+        fecha_actual = datetime.now().strftime("%Y-%m-%d")
         hora_actual = datetime.now().strftime('%H:%M')
         conn = connect()
         cursor = conn.cursor()
@@ -325,7 +325,7 @@ def guardar_factura():
         cursor.close()
         conn.close()
 
-        return render_template('confirmar_factura.html')
+        return render_template('confirmar_factura.html', cantidad_seleccionada=cantidad_seleccionada)
 
     return render_template('confirmar_factura.html')
 
@@ -336,16 +336,6 @@ def guardar_factura():
 def buscar_factura():
     if 'usuario_id' not in session:
         return redirect(url_for('login'))
-
-    if request.method == 'POST':
-        dni = request.form['dni']
-
-        cursor = connect().cursor()
-        cursor.execute("SELECT * FROM facturas WHERE cliente_id = (SELECT id FROM usuarios WHERE dni = %s)", dni)
-        facturas = cursor.fetchall()
-        cursor.close()
-
-        return render_template('facturas.html', facturas=facturas)
 
     return render_template('buscar_factura.html')
 
