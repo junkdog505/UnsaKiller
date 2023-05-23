@@ -247,14 +247,10 @@ def factura():
         # Antes de redirigir a la ruta '/guardar_factura', guarda los productos seleccionados en la sesión
         session['productos_seleccionados'] = productos_seleccionados
 
-        # Renderizar la plantilla factura.html y pasar los datos seleccionados
-        return render_template('factura.html', productos_seleccionados=productos_seleccionados,
-                               fecha_actual=fecha_actual, hora_actual=hora_actual,
-                               subtotal=subtotal, impuesto=impuesto, total=total)
+        return render_template('factura.html', productos_seleccionados=productos_seleccionados, subtotal=subtotal,
+                               impuesto=impuesto, total=total, fecha_actual=fecha_actual, hora_actual=hora_actual)
 
-    else:
-        # Renderizar la plantilla factura.html para mostrar el formulario inicial
-        return render_template('factura.html')
+    return render_template('factura.html')
 
 
 # Ruta para guardar la factura en la base de datos
@@ -287,17 +283,42 @@ def guardar_factura():
         # Obtener el ID de la factura recién insertada
         id_factura = cursor.lastrowid
 
-        # Insertar los productos de la factura en la tabla de productos_factura
+        # Actualizar la cantidad de productos y guardar los productos en la tabla productos_factura
         for producto in productos_seleccionados:
-            query = "SELECT id_producto FROM productos WHERE nombre = %s"
-            cursor.execute(query, (producto['nombre_producto'],))
-            id_producto = cursor.fetchone()[0]
+            query = "SELECT id_producto, cantidad FROM productos WHERE id_producto = %s"
+            cursor.execute(query, (producto['producto_id'],))
+            result = cursor.fetchone()
+            id_producto = result[0]
+            cantidad_actual = result[1]
+            print('cantidad_actual = result[1]: ', cantidad_actual)
 
-            # Insertar el producto en la tabla productos_factura
-            cursor.execute(
-                'INSERT INTO productos_factura (id_factura, id_producto) VALUES (%s, %s)',
-                (id_factura, id_producto)
-            )
+            # Obtener la cantidad seleccionada por el usuario
+            cantidad_seleccionada = producto['cantidad']
+            if cantidad_seleccionada is not None:
+                cantidad_seleccionada = int(cantidad_seleccionada)
+                print('cantidad_seleccionada', cantidad_seleccionada)
+
+                # Verificar si la cantidad seleccionada no excede la cantidad actual
+                if cantidad_seleccionada <= cantidad_actual:
+                    # Restar la cantidad seleccionada a la cantidad actual
+                    nueva_cantidad = cantidad_actual - cantidad_seleccionada
+                    print('nueva_cantidad', nueva_cantidad)
+
+                    # Actualizar la cantidad del producto en la tabla productos
+                    cursor.execute(
+                        'UPDATE productos SET cantidad = %s WHERE id_producto = %s',
+                        (nueva_cantidad, id_producto)
+                    )
+
+                    # Insertar el producto en la tabla productos_factura
+                    cursor.execute(
+                        'INSERT INTO productos_factura (id_factura, id_producto) VALUES (%s, %s)',
+                        (id_factura, id_producto)
+                    )
+                else:
+                    print("La cantidad seleccionada excede la cantidad actual del producto")
+            else:
+                print("La cantidad seleccionada es inválida")
 
         # Guardar los cambios y cerrar la conexión a la base de datos
         conn.commit()
@@ -307,7 +328,6 @@ def guardar_factura():
         return render_template('confirmar_factura.html')
 
     return render_template('confirmar_factura.html')
-
 
 
 

@@ -143,12 +143,12 @@
                 </thead>
                 <tbody>
                     {% for producto in productos_seleccionados %}
-                        <tr>
-                            <td>{{ producto['nombre_producto'] }}</td>
+                    <tr>
+                        <td>{{ producto['nombre_producto'] }}</td>
                             <td class="text-center">{{ producto['cantidad'] }}</td>
-                            <td class="text-center">{{ producto['precio'] }}</td>
-                            <td class="text-center">{{ producto['total'] }}</td>
-                        </tr>
+                        <td class="text-center">{{ producto['precio'] }}</td>
+                        <td class="text-center">{{ producto['total'] }}</td>
+                    </tr>
                     {% endfor %}
                     <tr class="total-row">
                         <td colspan="3" class="text-left">Subtotal:</td>
