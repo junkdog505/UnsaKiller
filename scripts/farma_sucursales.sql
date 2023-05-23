@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.33, for Linux (x86_64)
 --
--- Host: localhost    Database: ucsm_farmacia
+-- Host: localhost    Database: farma
 -- ------------------------------------------------------
 -- Server version	8.0.33
 
@@ -16,33 +16,30 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `usuarios`
+-- Table structure for table `sucursales`
 --
 
-DROP TABLE IF EXISTS `usuarios`;
+DROP TABLE IF EXISTS `sucursales`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `usuarios` (
-  `id_usuario` int NOT NULL AUTO_INCREMENT,
-  `nombres` varchar(100) NOT NULL,
-  `dni` char(8) NOT NULL,
-  `correo` varchar(100) NOT NULL,
-  `contrasena` varchar(100) NOT NULL,
-  PRIMARY KEY (`id_usuario`),
-  UNIQUE KEY `dni` (`dni`),
-  UNIQUE KEY `correo` (`correo`),
-  CONSTRAINT `chk_dni` CHECK (regexp_like(`dni`,_utf8mb4'^[0-9]{8}$'))
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+CREATE TABLE `sucursales` (
+  `id_sucursal` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) NOT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `ciudad` varchar(100) NOT NULL,
+  `pais` varchar(100) NOT NULL DEFAULT 'Perú',
+  PRIMARY KEY (`id_sucursal`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `usuarios`
+-- Dumping data for table `sucursales`
 --
 
-LOCK TABLES `usuarios` WRITE;
-/*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'Carlos Elisban Huaman','45678932','Carlos@ucsm.com','Carlos123*'),(2,'Cristian Amézquita Soto','76060985','nomad@gmail.com','Nomad18*'),(3,'Joseph Zorra','12345698','josephlolero@gmail.com','Lolero123*'),(4,'Edison Soto','45685295','akira@gmail.com','Nowhere123*');
-/*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
+LOCK TABLES `sucursales` WRITE;
+/*!40000 ALTER TABLE `sucursales` DISABLE KEYS */;
+INSERT INTO `sucursales` VALUES (1,'Sucursal A','Av. Ejercito 123','Arequipa','Perú'),(2,'Sucursal B','Jr. Tarapacá 404','Ucayali','Perú'),(3,'Sucursal C','Av. Imperial 505','Lima','Perú');
+/*!40000 ALTER TABLE `sucursales` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -54,4 +51,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-05-22  3:14:24
+-- Dump completed on 2023-05-23 12:40:31

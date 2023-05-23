@@ -65,8 +65,7 @@
             padding: 15px;
             border: 1.5px solid #ccc;
             text-align: center;
-            vertical-align: middle; /
-
+            vertical-align: middle;
         }
 
         .table th {
@@ -114,8 +113,7 @@
                 <h1>Factura</h1>
                 <input type="text" id="fecha" name="fecha" class="form-input" value="{{ fecha_actual }}   {{ hora_actual }}" readonly>
             </div>
-            <h2>{{ productos_seleccionados[0]['nombre_sucursal'] }}: {{ productos_seleccionados[0]['pais'] }}, {{
-                productos_seleccionados[0]['ciudad'] }} <br> {{ productos_seleccionados[0]['direccion'] }}. </h2>
+            <h2>{{ productos_seleccionados[0]['nombre_sucursal'] }}: {{ productos_seleccionados[0]['pais'] }}, {{ productos_seleccionados[0]['ciudad'] }} <br> {{ productos_seleccionados[0]['direccion'] }}.</h2>
             <div class="form-group">
                 <label for="nombre" class="form-label">Nombres del Cliente:</label>
                 <input type="text" id="nombre" name="nombre" class="form-input" value="{{ productos_seleccionados[0]['nombres'] }}" placeholder="Ingrese el nombre del cliente" readonly>
@@ -146,10 +144,10 @@
                 <tbody>
                     {% for producto in productos_seleccionados %}
                         <tr>
-                            <td>{{ producto.nombre_producto }}</td>
-                            <td class="text-center">{{ producto.cantidad }}</td>
-                            <td class="text-center">{{ producto.precio }}</td>
-                            <td class="text-center">{{ producto.total }}</td>
+                            <td>{{ producto['nombre_producto'] }}</td>
+                            <td class="text-center">{{ producto['cantidad'] }}</td>
+                            <td class="text-center">{{ producto['precio'] }}</td>
+                            <td class="text-center">{{ producto['total'] }}</td>
                         </tr>
                     {% endfor %}
                     <tr class="total-row">
@@ -168,15 +166,5 @@
             </table>
         </div>
     </div>
-    <script>
-        // Fade in animation for the container
-        const container = document.querySelector('.container');
-        container.classList.add('fade-in');
-
-        // Fade in animation for the table
-        const table = document.querySelector('.fade-in-table');
-        table.classList.add('fade-in-table');
-
-    </script>
 </body>
 </html>

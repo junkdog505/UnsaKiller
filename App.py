@@ -5,11 +5,7 @@ import pymysql
 import re
 from datetime import datetime
 from decimal import Decimal
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 
-
-from flask_login import current_user, LoginManager, UserMixin
 
 app = Flask(__name__)
 app.secret_key = 'testing_grupo01'
@@ -20,26 +16,9 @@ def connect():
         host='localhost',
         password='Nomad18*',
         user='root',
-        db='ucsm_farmacia',
+        db='farma',
         port=3306
     )
-
-# Configuración de la ruta de imágenes de productos
-app.config['PRODUCT_IMAGE_PATH'] = 'static/images/products/'
-
-# Configuración de Flask-Login
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
-
-# Clase de usuario para Flask-Login
-class User(UserMixin):
-    def __init__(self, id):
-        self.id = id
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User(user_id)
-
 
 # Funciones de validación de campos
 def validar_nombre(nombre):
@@ -254,7 +233,7 @@ def factura():
                         'nombre_sucursal': producto[5],
                         'direccion': producto[6],
                         'ciudad': producto[7],
-                        'pais':producto[8],
+                        'pais': producto[8],
                         'producto_id': producto_id
                     })
 
@@ -264,6 +243,7 @@ def factura():
         # Calcular impuesto y total
         impuesto = subtotal * Decimal('0.18')
         total = subtotal + impuesto
+
         # Antes de redirigir a la ruta '/guardar_factura', guarda los productos seleccionados en la sesión
         session['productos_seleccionados'] = productos_seleccionados
 
@@ -286,10 +266,7 @@ def guardar_factura():
 
     if request.method == 'POST':
         # Obtener los datos de la factura del formulario
-        fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        nombre_cliente = request.form.get('nombre')
-        dni_cliente = request.form.get('dni')
-        correo_cliente = request.form.get('correo')
+        fecha_actual = datetime.now().strftime("%Y-%m-%d")
         productos_seleccionados = session.get('productos_seleccionados')
 
         # Calcular el subtotal, impuesto y total
@@ -301,18 +278,30 @@ def guardar_factura():
         cursor = conn.cursor()
 
         # Insertar los datos de la factura en la tabla de facturas
-        query = "SELECT id_producto FROM productos WHERE nombre = %s"
-        cursor.execute(query, (productos_seleccionados[0]['nombre_producto']))
-        id_producto = cursor.fetchone()[0]
-
         cursor.execute(
-            'INSERT INTO factura (id_usuario, id_producto, fecha, subtotal, igv, total) '
+            'INSERT INTO factura (id_usuario, cantidad_productos, fecha, subtotal, igv, total) '
             'VALUES (%s, %s, %s, %s, %s, %s)',
-            (usuario_id, id_producto,fecha_actual, subtotal, impuesto, total)
+            (usuario_id, len(productos_seleccionados), fecha_actual, subtotal, impuesto, total)
         )
+
+        # Obtener el ID de la factura recién insertada
+        id_factura = cursor.lastrowid
+
+        # Insertar los productos de la factura en la tabla de productos_factura
+        for producto in productos_seleccionados:
+            query = "SELECT id_producto FROM productos WHERE nombre = %s"
+            cursor.execute(query, (producto['nombre_producto'],))
+            id_producto = cursor.fetchone()[0]
+
+            # Insertar el producto en la tabla productos_factura
+            cursor.execute(
+                'INSERT INTO productos_factura (id_factura, id_producto) VALUES (%s, %s)',
+                (id_factura, id_producto)
+            )
 
         # Guardar los cambios y cerrar la conexión a la base de datos
         conn.commit()
+        cursor.close()
         conn.close()
 
         return render_template('confirmar_factura.html')
